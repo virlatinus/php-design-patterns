@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+
+  laravel:
+    image: 'laravel-demo:latest'
+    container_name: 'laravel-demo'
+    build:
+      context: .
+    ports:
+      - 9804:9804
+    environment:
+      - OPCACHE_URL=http://localhost:9804
+    volumes:
+      # Re-use local composer cache via host-volume
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      # Mount source-code for development
+      - ./src:/var/www
+      # https://medium.com/appstract/make-your-laravel-app-fly-with-php-opcache-9948db2a5f93
+      - ./conf/opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
+    networks:
+      - external_net
+
+networks:
+  external_net:
+    name: development
+    external: true
