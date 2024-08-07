@@ -3,8 +3,8 @@ version: '3.9'
 services:
 
   laravel:
-    image: 'laravel-demo:latest'
-    container_name: 'laravel-demo'
+    image: laravel-demo:latest
+    container_name: laravel-demo
     build:
       context: .
     ports:
@@ -18,6 +18,14 @@ services:
       - ./src:/var/www
       # https://medium.com/appstract/make-your-laravel-app-fly-with-php-opcache-9948db2a5f93
       - ./conf/opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
+    networks:
+      - external_net
+    restart: unless-stopped
+
+
+  memcache:
+    image: memcached:latest
+    container_name: memcache
     networks:
       - external_net
 
