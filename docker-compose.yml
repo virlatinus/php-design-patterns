@@ -1,14 +1,12 @@
-version: '3.9'
-
 services:
 
   laravel:
-    image: laravel-demo:latest
-    container_name: laravel-demo
+    image: laravel-app:latest
+    container_name: laravel-app
     build:
       context: .
     ports:
-      - 9804:9804
+      - "9804:9804"
     environment:
       - OPCACHE_URL=http://localhost:9804
     volumes:
@@ -18,18 +16,23 @@ services:
       - ./src:/var/www
       # https://medium.com/appstract/make-your-laravel-app-fly-with-php-opcache-9948db2a5f93
       - ./conf/opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
-    networks:
-      - external_net
     restart: unless-stopped
+    links:
+      - mysql
+      - rabbitmq
+      - redis
 
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    volumes:
+      - /etc/mysql
+      - /var/lib/mysql
 
-  memcache:
-    image: memcached:latest
-    container_name: memcache
-    networks:
-      - external_net
+  redis:
+    image: redis:latest
+    container_name: redis
 
-networks:
-  external_net:
-    name: development
-    external: true
+  rabbitmq:
+    image: rabbitmq:latest
+    container_name: rabbitmq
