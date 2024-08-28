@@ -2,10 +2,6 @@
 
 use Illuminate\Support\Str;
 
-if (!class_exists('Memcached')) {
-    include_once ("../memcached-api.php");
-}
-
 return [
 
     /*

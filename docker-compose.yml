@@ -1,14 +1,18 @@
-services:
+networks:
+  default:
+    name: laravel-app
 
+services:
   laravel:
     image: laravel-app:latest
     container_name: laravel-app
     build:
       context: .
     ports:
-      - "9804:9804"
+      - "80:80"
+      - "8080:8080"
     environment:
-      - OPCACHE_URL=http://localhost:9804
+      - OPCACHE_URL=http://localhost
     volumes:
       # Re-use local composer cache via host-volume
       - ~/.composer-docker/cache:/root/.composer/cache:delegated
@@ -23,16 +27,34 @@ services:
       - redis
 
   mysql:
-    image: mysql:latest
+    image: mysql:lts
     container_name: mysql
     volumes:
       - /etc/mysql
       - /var/lib/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 
   redis:
-    image: redis:latest
+    image: redis:alpine
     container_name: redis
+    command: redis-server --appendonly yes --requirepass "${REDIS_PASSWORD}"
+    volumes:
+      - /data
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
 
   rabbitmq:
-    image: rabbitmq:latest
+    image: rabbitmq:management-alpine
     container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_USER=${RABBITMQ_USER}

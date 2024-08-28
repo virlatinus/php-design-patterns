@@ -34,3 +34,4 @@ Homestead.json
 .fleet
 .idea
 .vscode
+src/storage/debugbar
